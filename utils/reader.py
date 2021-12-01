@@ -18,7 +18,7 @@ class CoNLLReader(Dataset):
         self.tokenizer = AutoTokenizer.from_pretrained(pretrained_dir + encoder_model)
 
         self.pad_token = self.tokenizer.special_tokens_map['pad_token']
-        self.pad_token_id = self.tokenizer.get_vocab()['<pad>']
+        self.pad_token_id = self.tokenizer.get_vocab()[self.pad_token]
         self.sep_token = self.tokenizer.special_tokens_map['sep_token']
 
         self.label_to_id = {} if target_vocab is None else target_vocab
@@ -41,7 +41,7 @@ class CoNLLReader(Dataset):
         logger.info('Reading file {}'.format(dataset_name))
         instance_idx = 0
 
-        for fields in get_ner_reader(data=data):
+        for fields, metadata in get_ner_reader(data=data):
             if self._max_instances != -1 and instance_idx > self._max_instances:
                 break
             sentence_str, tokens_sub_rep, token_masks_rep, coded_ner_, gold_spans_ = self.parse_line_for_ner(fields=fields)
